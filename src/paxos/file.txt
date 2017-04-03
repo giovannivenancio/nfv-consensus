@@ -1,0 +1,2 @@
+2016-09-27 12:15:28 - INFO: Setting level to DEBUG
+2016-09-27 12:15:28 - INFO: Starting connection as CLIENT

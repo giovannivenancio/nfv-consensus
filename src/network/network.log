@@ -1,0 +1,51 @@
+
+*** Stopping containers
+*** Stopping remaining processes
+
+*** Creating domain file
+
++------------+-------------+
+|    VNFs    | Controllers |
++------------+-------------+
+| 172.17.0.8 |  172.17.0.4 |
+| 172.17.0.8 |  172.17.0.5 |
+| 172.17.0.9 |  172.17.0.6 |
+| 172.17.0.7 |  172.17.0.2 |
+| 172.17.0.7 |  172.17.0.3 |
++------------+-------------+
+
+*** Starting [5] controllers
+
+Running controller on 172.17.0.2
+Running controller on 172.17.0.3
+Running controller on 172.17.0.4
+Running controller on 172.17.0.5
+Running controller on 172.17.0.6
+
+*** Starting [3] VNF-Paxos
+
+Running VNF-Paxos on 172.17.0.7 with ACCEPTOR LEARNER PROPOSER
+Running VNF-Paxos on 172.17.0.8 with ACCEPTOR LEARNER
+Running VNF-Paxos on 172.17.0.9 with ACCEPTOR LEARNER
+
+
+Loading... 10
+Loading... 9
+Loading... 8
+Loading... 7
+Loading... 6
+Loading... 5
+Loading... 4
+Loading... 3
+Loading... 2
+Loading... 1
+
+*** Starting [5] cbench clients
+
+Running cbench on 172.17.0.2
+Running cbench on 172.17.0.3
+Running cbench on 172.17.0.4
+Running cbench on 172.17.0.5
+Running cbench on 172.17.0.6
+
+*** Network is Online
