@@ -1,0 +1,3 @@
+- fazer controller se conectar com o libpaxos
+- executar client do libpaxos no controller
+- fazer learner enviar mensagens aprendidas para o manager
