@@ -25,19 +25,19 @@ class ConsensusSwitch(app_manager.RyuApp):
 
         self.ip = self.get_my_ip()
 
-        server_address = ('localhost', 10000)
+        server_address = ('127.0.1.1', 8900)
         self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        # while True:
-        #     try:
-        #         #print "Trying to connect with Paxos Client on %s:%d" % server_address
-        #         self.conn.connect(server_address)
-        #         break
-        #     except:
-        #         time.sleep(1)
+        while True:
+            try:
+                #print "Trying to connect with Paxos Client on %s:%d" % server_address
+                self.conn.connect(server_address)
+                break
+            except:
+                time.sleep(1)
 
     def get_my_ip(self):
-        f = os.popen('ifconfig enp2s0 | grep "inet\ addr" | cut -d: -f2 | cut -d" " -f1')
+        f = os.popen('ifconfig eth0 | grep "inet\ addr" | cut -d: -f2 | cut -d" " -f1')
         ip = f.read()
         return ip[:-1]
 
@@ -85,10 +85,14 @@ class ConsensusSwitch(app_manager.RyuApp):
         if out_port != ofproto.OFPP_FLOOD:
             message = self.build_rule(datapath, msg.in_port, out_port, dst)
             message += ' # ' + self.ip
-            print message
-            print len(message)
+            size = str(len(message))
+
+            #print message
+            #print len(message)
+
             # Send request for consensus
-            #self.conn.sendall(message)
+            self.conn.send(size)
+            self.conn.send(message)
 
             # Debug only
             #self.pkts += 1

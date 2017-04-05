@@ -134,9 +134,18 @@ class Network():
         """
 
         for ctl in self.controllers:
-            #cbench -c 172.17.0.2 -p 6653 -s 1 -M 1 -l 15 -m 10
             logging.info("Running cbench on %s" % ctl)
-            #print "cbench %s [params]" % ctl
+
+            cmd = ['cbench',
+                '-c', ctl,
+                '-p', '6653',
+                '-s', '1',
+                '-M', '1',
+                '-l', '15',
+                '-m', '2'
+            ]
+
+            self.run(cmd)
 
     def sleep(self):
         time.sleep(1000000000)

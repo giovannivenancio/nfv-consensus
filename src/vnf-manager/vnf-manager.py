@@ -25,7 +25,7 @@ class Manager():
         self.conn = self.start_server()
 
     def start_server(self):
-        server_address = ('localhost', 10000)
+        server_address = ('127.0.0.1', 8900)
         conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         conn.bind(server_address)
         return conn
@@ -98,17 +98,13 @@ class Manager():
         while True:
             connection, client_address = self.conn.accept()
             try:
-                print 'connection from', client_address
-
                 # Receive the data in small chunks and retransmit it
                 # http://stupidpythonideas.blogspot.com.br/2013/05/sockets-are-byte-streams-not-message.html
-                while True:
-                    message = connection.recv(64)
-                    print 'received "%s"' % message
-                    if message:
-                        print 'done'
+                size = int(connection.recv(3))
+                message = connection.recv(size)
 
-                    self.handle_request(message)
+                print 'received "%s"' % message
+                self.handle_request(message)
             finally:
                 #print timestamp [comeco_da_regra...fim_da_regra] avg=3627us
                 print datetime.datetime.now().strftime("%H:%M:%S.%f")
