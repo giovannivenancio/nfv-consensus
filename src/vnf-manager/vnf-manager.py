@@ -105,9 +105,6 @@ class Manager():
 
                 print 'received "%s"' % message
                 self.handle_request(message)
-            finally:
-                #print timestamp [comeco_da_regra...fim_da_regra] avg=3627us
-                print datetime.datetime.now().strftime("%H:%M:%S.%f")
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
