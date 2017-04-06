@@ -105,13 +105,13 @@ class Manager():
 
                 print 'received "%s"' % message
                 self.handle_request(message)
+	    except:
+		pass
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
         print 'usage: %s <start_id> [LEARNER] [ACCEPTOR] [PROPOSER] [CLIENT]' % sys.argv[0]
         exit(1)
-
-    os.system("pkill -f java")
 
     manager = Manager(int(sys.argv[1]), sys.argv[2:])
 

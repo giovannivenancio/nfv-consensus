@@ -7,11 +7,11 @@
 +------------+-------------+
 |    VNFs    | Controllers |
 +------------+-------------+
-| 172.17.0.8 |  172.17.0.4 |
 | 172.17.0.8 |  172.17.0.5 |
-| 172.17.0.9 |  172.17.0.6 |
+| 172.17.0.8 |  172.17.0.6 |
 | 172.17.0.7 |  172.17.0.2 |
 | 172.17.0.7 |  172.17.0.3 |
+| 172.17.0.7 |  172.17.0.4 |
 +------------+-------------+
 
 *** Starting [5] controllers
@@ -22,11 +22,10 @@ Running controller on 172.17.0.4
 Running controller on 172.17.0.5
 Running controller on 172.17.0.6
 
-*** Starting [3] VNF-Paxos
+*** Starting [2] VNF-Paxos
 
 Running VNF-Paxos on 172.17.0.7 with ACCEPTOR LEARNER PROPOSER
 Running VNF-Paxos on 172.17.0.8 with ACCEPTOR LEARNER
-Running VNF-Paxos on 172.17.0.9 with ACCEPTOR LEARNER
 
 
 Loading... 10
@@ -42,10 +41,5 @@ Loading... 1
 
 *** Starting [5] cbench clients
 
-Running cbench on 172.17.0.2
-Running cbench on 172.17.0.3
-Running cbench on 172.17.0.4
-Running cbench on 172.17.0.5
-Running cbench on 172.17.0.6
 
 *** Network is Online
