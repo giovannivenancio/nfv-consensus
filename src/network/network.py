@@ -24,8 +24,26 @@ class Network():
 
         self.controllers = [ip_base + str(ctl_host_base + i) for i in range(self.num_ctls)]
         self.vnfs = [ip_base + str(vnf_host_base + i) for i in range(self.num_vnfs)]
-
+        self.create_paxos_conf()
         self.domain = self.build_domain()
+
+    def create_paxos_conf(self):
+        """
+        Write on paxos.conf the correct IP Address for proposers and acceptors
+        """
+
+        with open('../paxos/vnf-paxos/paxos.conf.example', 'r') as f:
+            data = f.read()
+
+        with open('../paxos/vnf-paxos/paxos.conf', 'w') as f:
+            f.write(data)
+
+            f.write(' '.join(['proposer', self.vnfs[0], '0', '5550\n']))
+
+            i = 0
+            for vnf in self.vnfs:
+                f.write(' '.join(['acceptor', vnf, str(i), str(8800 + i) + '\n']))
+                i += 1
 
     def build_domain(self):
         """

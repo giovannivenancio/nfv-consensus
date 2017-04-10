@@ -31,6 +31,10 @@ class Manager():
         self.execute_roles(roles)
 
     def start_server(self):
+        """
+
+        """
+
         server_address = ('127.0.1.1', 8901)
         conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         conn.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -39,6 +43,10 @@ class Manager():
         return conn
 
     def get_my_ip(self):
+        """
+
+        """
+
         f = os.popen('ifconfig eth0 | grep "inet\ addr" | cut -d: -f2 | cut -d" " -f1')
         ip = f.read()
         return ip[:-1]
@@ -47,13 +55,27 @@ class Manager():
         """
         Execute bash commands
         """
+
         fh = open("NUL","w")
         Popen(cmd, stdin=None, stdout=fh, stderr=fh)
         fh.close()
 
     def execute_roles(self, roles):
+        """
+        Execute each Paxos role.
+        """
+
+        with open('/projects/nfv-consensus/src/paxos/vnf-paxos/paxos.conf', 'r') as f:
+            acceptors = f.readlines()[:-4:-1]
+            for acceptor in acceptors:
+                acceptor_ip, acceptor_id = acceptor.split(' ')[1:3]
+
+                if acceptor_ip == self.ip:
+                    acceptor_id = str(acceptor_id)
+                    break
+
         if 'ACCEPTOR' in roles:
-            self.run([self.paxos_path + 'acceptor', '0', self.paxos_conf])
+            self.run([self.paxos_path + 'acceptor', acceptor_id, self.paxos_conf])
         if 'PROPOSER' in roles:
             self.run([self.paxos_path + 'proposer', '0', self.paxos_conf])
         if 'LEARNER' in roles:
@@ -124,7 +146,7 @@ class Manager():
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
-        print 'usage: %s [LEARNER] [ACCEPTOR] [PROPOSER] [CLIENT]' % sys.argv[0]
+        print 'usage: %s [LEARNER] [ACCEPTOR] [PROPOSER]' % sys.argv[0]
         exit(1)
 
     os.system('pkill -f proposer')
