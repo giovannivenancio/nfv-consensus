@@ -73,8 +73,7 @@ class Network():
                 '-v', '/home/gvsouza/projects:/projects',
                 '-it', 'gvsouza/nfv-consenso',
                 '/bin/bash', '-c',
-                'cd /projects/nfv-consensus/src/controller/; \
-                ryu-manager controller.py ofctl_rest.py 2>&1'
+                '/projects/nfv-consensus/src/controller/controller.sh'
             ]
 
             self.run(cmd)
@@ -105,13 +104,20 @@ class Network():
         for vnf in self.vnfs:
             roles = ' '.join(roles_list)
 
-            cmd = ['docker', 'run',
-                '-v', '/home/gvsouza/projects:/projects',
-                '-it', 'gvsouza/nfv-consenso',
-                '/bin/bash', '-c',
-                '\"cd /projects/nfv-consensus/src/vnf-manager/; \
-                python vnf-manager.py %s %s\"' % (str(i), roles)
-            ]
+            if 'PROPOSER' in roles:
+                cmd = ['docker', 'run',
+                    '-v', '/home/gvsouza/projects:/projects',
+                    '-it', 'gvsouza/nfv-consenso',
+                    '/bin/bash', '-c',
+                    '/projects/nfv-consensus/src/vnf-manager/vnf-manager-proposer.sh'
+                ]
+            else:
+                cmd = ['docker', 'run',
+                    '-v', '/home/gvsouza/projects:/projects',
+                    '-it', 'gvsouza/nfv-consenso',
+                    '/bin/bash', '-c',
+                    '/projects/nfv-consensus/src/vnf-manager/vnf-manager.sh'
+                ]
 
             logging.info("Running VNF-Paxos on %s with %s" % (vnf, roles))
 
@@ -178,7 +184,9 @@ class Network():
         Execute bash commands
         """
 
-        Popen(cmd, stdin=None, stdout=None, stderr=None)
+        fh = open("NUL","w")
+        Popen(cmd, stdin=None, stdout=fh, stderr=fh)
+        fh.close()
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:

@@ -5,6 +5,7 @@ import socket
 import time
 
 from time import strftime
+from subprocess import Popen
 from ryu.base import app_manager
 from ryu.controller import ofp_event
 from ryu.controller.handler import MAIN_DISPATCHER
@@ -25,6 +26,7 @@ class ConsensusSwitch(app_manager.RyuApp):
 
         self.ip = self.get_my_ip()
 
+        time.sleep(1)
         server_address = ('127.0.1.1', 8900)
         self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -32,8 +34,12 @@ class ConsensusSwitch(app_manager.RyuApp):
             try:
                 #print "Trying to connect with Paxos Client on %s:%d" % server_address
                 self.conn.connect(server_address)
+                with open('/log', 'a') as f:
+                    f.write("ok\n")
                 break
             except:
+                with open('/log', 'a') as f:
+                    f.write("not ok\n" + str(server_address))
                 time.sleep(1)
 
     def get_my_ip(self):
@@ -87,16 +93,9 @@ class ConsensusSwitch(app_manager.RyuApp):
             message += ' # ' + self.ip
             size = str(len(message))
 
-            #print message
-            #print len(message)
-
             # Send request for consensus
             self.conn.send(size)
             self.conn.send(message)
-
-            # Debug only
-            #self.pkts += 1
-            #print "recebi ", self.pkts
 
         data = None
         if msg.buffer_id == ofproto.OFP_NO_BUFFER:

@@ -7,33 +7,57 @@ import socket
 import sys
 import time
 import yaml
+from subprocess import Popen
 from time import gmtime, strftime
 
 class Manager():
 
-    def __init__(self, role_id, roles):
+    def __init__(self, roles):
         signal.signal(signal.SIGINT, self.terminate)
 
         self.ip = self.get_my_ip()
 
-        with open("config.yml", 'r') as ymlfile:
+        with open("/projects/nfv-consensus/src/vnf-manager/config.yml", 'r') as ymlfile:
             self.cfg = yaml.load(ymlfile)
+            self.paxos_path = self.cfg['config']
+            self.paxos_conf = self.paxos_path + 'paxos.conf'
 
         self.domain = self.get_domain()
 
         # Start TCP Server
         self.conn = self.start_server()
 
+        # Execute paxos roles
+        self.execute_roles(roles)
+
     def start_server(self):
-        server_address = ('127.0.0.1', 8900)
+        server_address = ('127.0.1.1', 8901)
         conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        conn.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         conn.bind(server_address)
+        conn.listen(1)
         return conn
 
     def get_my_ip(self):
         f = os.popen('ifconfig eth0 | grep "inet\ addr" | cut -d: -f2 | cut -d" " -f1')
         ip = f.read()
         return ip[:-1]
+
+    def run(self, cmd):
+        """
+        Execute bash commands
+        """
+        fh = open("NUL","w")
+        Popen(cmd, stdin=None, stdout=fh, stderr=fh)
+        fh.close()
+
+    def execute_roles(self, roles):
+        if 'ACCEPTOR' in roles:
+            self.run([self.paxos_path + 'acceptor', '0', self.paxos_conf])
+        if 'PROPOSER' in roles:
+            self.run([self.paxos_path + 'proposer', '0', self.paxos_conf])
+        if 'LEARNER' in roles:
+            self.run([self.paxos_path + 'learner-paxos-vnf', self.paxos_conf])
 
     def get_domain(self):
         """
@@ -47,7 +71,7 @@ class Manager():
 
         vnf_domain = []
 
-        with open("../network/domain", 'r') as f:
+        with open("/projects/nfv-consensus/src/network/domain", 'r') as f:
             domain = f.readlines()
             for d in domain:
                 vnf, controller = d[:-1].split(' ')
@@ -63,7 +87,11 @@ class Manager():
         On Keyboard Interrupt, kill remaining processes
         """
 
-        os.system("pkill -f vnf-manager")
+        os.system('pkill -f vnf-manager')
+        os.system('pkill -f proposer')
+        os.system('pkill -f acceptor')
+        os.system('pkill -f client-paxos-vnf')
+        os.system('pkill -f learner-paxos-vnf')
         exit(0)
 
     def handle_request(self, message):
@@ -88,35 +116,27 @@ class Manager():
         Keep waiting for consensus requests
         """
 
-        i = 0
-        while True:
-            print "ok... %d" % i
-            time.sleep(1)
-            i+= 1
-
         connection, client_address = self.conn.accept()
         while True:
-            try:
-                # Receive the data in small chunks and retransmit it
-                # http://stupidpythonideas.blogspot.com.br/2013/05/sockets-are-byte-streams-not-message.html
-                size = int(connection.recv(3))
-                message = connection.recv(size)
-
-                print 'received "%s"' % message
-                self.handle_request(message)
-            except:
-                pass
+            message = connection.recv(192)
+            print 'received "%s"' % message
+            #self.handle_request(message)
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
-        print 'usage: %s <start_id> [LEARNER] [ACCEPTOR] [PROPOSER] [CLIENT]' % sys.argv[0]
+        print 'usage: %s [LEARNER] [ACCEPTOR] [PROPOSER] [CLIENT]' % sys.argv[0]
         exit(1)
 
-    manager = Manager(int(sys.argv[1]), sys.argv[2:])
+    os.system('pkill -f proposer')
+    os.system('pkill -f acceptor')
+    os.system('pkill -f client-paxos-vnf')
+    os.system('pkill -f learner-paxos-vnf')
 
-    print "*** Paxos is running"
+    manager = Manager(sys.argv[1:])
+
+    print "\n*** Paxos is running"
     print "- IP: %s"  % manager.ip
     print "- Domain: %s" % manager.domain
-    print "- Roles: %s\n" % ' '.join(sys.argv[2:])
+    print "- Roles: %s\n" % ' '.join(sys.argv[1:])
 
     manager.mainloop()
