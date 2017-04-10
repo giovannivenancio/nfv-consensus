@@ -1,0 +1,4 @@
+domain
+*.log
+*swp
+*pyc

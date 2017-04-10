@@ -64,7 +64,6 @@ class Manager():
         """
 
         os.system("pkill -f vnf-manager")
-        os.system("pkill -f java")
         exit(0)
 
     def handle_request(self, message):
@@ -95,8 +94,8 @@ class Manager():
             time.sleep(1)
             i+= 1
 
+        connection, client_address = self.conn.accept()
         while True:
-            connection, client_address = self.conn.accept()
             try:
                 # Receive the data in small chunks and retransmit it
                 # http://stupidpythonideas.blogspot.com.br/2013/05/sockets-are-byte-streams-not-message.html
@@ -105,13 +104,13 @@ class Manager():
 
                 print 'received "%s"' % message
                 self.handle_request(message)
+            except:
+                pass
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
         print 'usage: %s <start_id> [LEARNER] [ACCEPTOR] [PROPOSER] [CLIENT]' % sys.argv[0]
         exit(1)
-
-    os.system("pkill -f java")
 
     manager = Manager(int(sys.argv[1]), sys.argv[2:])
 
