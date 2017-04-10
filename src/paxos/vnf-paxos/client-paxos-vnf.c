@@ -165,8 +165,8 @@ on_connect(struct bufferevent* bev, short events, void* arg)
 	struct client* c = arg;
 	if (events & BEV_EVENT_CONNECTED) {
 		printf("Connected to proposer\n");
-		for (i = 0; i < c->outstanding; ++i)
-			client_submit_internal_value(c);
+		//for (i = 0; i < c->outstanding; ++i)
+		//	client_submit_internal_value(c);
 	} else {
 		printf("%s\n", evutil_socket_error_to_string(EVUTIL_SOCKET_ERROR()));
 	}

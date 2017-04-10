@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 CONFIG="paxos.conf"
 OPT="--verbose"
 
@@ -8,21 +7,22 @@ tmux_test ()  {
 	tmux new-session -d -s paxos
 	tmux new-window -t paxos
 
-	for (( i = 0; i < 4; i++ )); do
+	for (( i = 0; i < 7; i++ )); do
 		tmux split
 		tmux select-layout even-vertical
 	done
 
-	for (( i = 0; i < 3; i++ )); do
-		tmux send-keys -t $i "$VG ./replica $i $CONFIG $OPT" C-m
-	done
+    for (( i = 0; i < 3; i++ )); do
+        tmux send-keys -t $i "$VG ./acceptor $i $CONFIG" C-m
+    done
 
-	tmux send-keys -t 3 "./client-paxos-vnf $CONFIG" C-m
-	#tmux send-keys -t 4 "python client.py" C-m
-	tmux selectp -t 4
+    tmux send-keys -t 3 "./proposer 0 $CONFIG" C-m
+    tmux send-keys -t 4 "python server.py" C-m
+    sleep 1
+	tmux send-keys -t 5 "./client-paxos-vnf $CONFIG" C-m
+    tmux send-keys -t 6 "./learner-paxos-vnf $CONFIG" C-m
 
-	#tmux send-keys -t 4 "./client-vnf-test $CONFIG" C-m
-	#tmux selectp -t 4
+	tmux selectp -t 7
 
 	tmux attach-session -t paxos
 	tmux kill-session -t paxos
@@ -62,3 +62,4 @@ while [[ $# > 0 ]]; do
 done
 
 tmux_test
+

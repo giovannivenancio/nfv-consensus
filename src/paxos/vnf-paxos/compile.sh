@@ -1,6 +1,8 @@
 cc	 -Wall -g -I/home/gvsouza/libpaxos/build/local/include   -c client-vnf-test.c  -o client-vnf-test.o
 cc	 -Wall -g -I/home/gvsouza/libpaxos/build/local/include   -o client-vnf-test client-vnf-test.o -L/home/gvsouza/libpaxos/build/local/lib -levent
 
+cc   -Wall -g -I/home/gvsouza/libpaxos/build/local/include   -c learner-paxos-vnf.c  -o learner-paxos-vnf.o
+cc   -Wall -g -I/home/gvsouza/libpaxos/build/local/include   -o learner-paxos-vnf learner-paxos-vnf.o -L/home/gvsouza/libpaxos/build/local/lib -levpaxos -levent
 
 cc	 -Wall -g -I/home/gvsouza/libpaxos/build/local/include   -c client-paxos-vnf.c  -o client-paxos-vnf.o
 cc	 -Wall -g -I/home/gvsouza/libpaxos/build/local/include   -o client-paxos-vnf client-paxos-vnf.o -L/home/gvsouza/libpaxos/build/local/lib -levpaxos -levent
