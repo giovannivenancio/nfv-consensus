@@ -104,12 +104,21 @@ static void
 client_submit_value(struct client* c, char *string, int len)
 {
     struct client_value v;
+    /*FILE *f = fopen("client_debug.txt", "a");
+    if (f == NULL)
+    {
+        printf("Error opening file!\n");
+        exit(1);
+    }*/
 
     gettimeofday(&v.t, NULL);
     strcpy(v.value, string);
     v.size = len;
    size_t size = sizeof(struct timeval) + sizeof(size_t) + v.size;
+    /*fprintf(f, "%d\n", size);
+    fprintf(f, "%s\n", v.value);*/
     paxos_submit(c->bev, (char*)&v, size);
+    //fclose(f);
 }
 
 // Returns t2 - t1 in microseconds.
@@ -165,8 +174,8 @@ on_connect(struct bufferevent* bev, short events, void* arg)
 	struct client* c = arg;
 	if (events & BEV_EVENT_CONNECTED) {
 		printf("Connected to proposer\n");
-		for (i = 0; i < c->outstanding; ++i)
-			client_submit_internal_value(c);
+		//for (i = 0; i < c->outstanding; ++i)
+		//	client_submit_internal_value(c);
 	} else {
 		printf("%s\n", evutil_socket_error_to_string(EVUTIL_SOCKET_ERROR()));
 	}
@@ -193,12 +202,12 @@ connect_to_proposer(struct client* c, const char* config, int proposer_id)
 
 static void
 extract_data(struct evbuffer *input, size_t len, struct client *c, struct bufferevent *bev){
-    FILE *f = fopen("client_debug.txt", "a");
+    /*FILE *f = fopen("client_debug.txt", "a");
     if (f == NULL)
     {
         printf("Error opening file!\n");
         exit(1);
-    }
+    }*/
 
     //struct client_value v;
     char v[MAX_VALUE_SIZE];
@@ -210,7 +219,8 @@ extract_data(struct evbuffer *input, size_t len, struct client *c, struct buffer
     while (len >=  header_size){
         evbuffer_copyout(input,&dados, header_size);
 	    dados_size = atoi(dados);
-	    //printf("dadossize: %d\n", dados_size);
+	    printf("dadossize: %d\n", dados_size);
+        //fprintf(f, "dadossize: %d\n", dados_size);
         len = len -  header_size;
 	    //printf("len: %d\n", len);
         if ( len >= dados_size){
@@ -219,21 +229,24 @@ extract_data(struct evbuffer *input, size_t len, struct client *c, struct buffer
     	    v[dados_size] = '\0';
             len = len - dados_size;
             client_submit_value(c, v, dados_size);
-            //printf("Received message %s \n", v);
-            fprintf(f, "Recebi: %s\n", v);
+            printf("Received message %s \n", v);
+            //fprintf(f, "Recebi: %s\n", v);
         }
     }
 
-    fclose(f);
+    //fclose(f);
 }
 
 static void
 on_recv_value(struct bufferevent *bev, void *arg)
 {
+    //FILE *f = fopen("client_debug.txt", "a");
     struct client *c = arg;
     struct evbuffer *input = bufferevent_get_input(bev);
     size_t len = evbuffer_get_length(input);
     //printf("new data to read: %d\n", len);
+    //fprintf(f, "new data to read: %d\n", len);
+    //fclose(f);
     extract_data(input, len, c, bev);
 
 }
@@ -367,8 +380,8 @@ main(int argc, char const *argv[])
 {
 	int i = 1;
 	int proposer_id = 0;
-	int outstanding = 10;
-	int value_size = 192;
+	int outstanding = 1;
+	int value_size = 32;
 	const char* config = "../paxos.conf";
 
 	if (argc > 1 && argv[1][0] != '-') {
