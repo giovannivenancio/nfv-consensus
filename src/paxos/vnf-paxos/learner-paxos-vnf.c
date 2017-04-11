@@ -72,9 +72,12 @@ submit_manager(struct client_value* v)
 static void
 deliver(unsigned iid, char* value, size_t size, void* arg)
 {
+	FILE *f = fopen("learner_debug.txt", "a");
 	struct client_value* v = (struct client_value*)value;
 	printf("Delivered value: %s\n", v->value);
 	submit_manager(v);
+	fprintf(f, "Recebi: %s\n", v->value);
+	fclose(f);
 }
 
 static void

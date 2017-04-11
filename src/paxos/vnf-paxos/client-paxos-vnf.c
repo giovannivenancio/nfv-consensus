@@ -193,30 +193,38 @@ connect_to_proposer(struct client* c, const char* config, int proposer_id)
 
 static void
 extract_data(struct evbuffer *input, size_t len, struct client *c, struct bufferevent *bev){
+    FILE *f = fopen("client_debug.txt", "a");
+    if (f == NULL)
+    {
+        printf("Error opening file!\n");
+        exit(1);
+    }
 
     //struct client_value v;
     char v[MAX_VALUE_SIZE];
-    char dados[3]; 
+    char dados[3];
     int dados_size;
-   // size_t header_size = sizeof(size_t);
-   size_t header_size = sizeof(char) * 3;
+    // size_t header_size = sizeof(size_t);
+    size_t header_size = sizeof(char) * 3;
     //printf("header size: %d\n", header_size);
     while (len >=  header_size){
         evbuffer_copyout(input,&dados, header_size);
-	dados_size = atoi(dados);
-	//printf("dadossize: %d\n", dados_size); 
+	    dados_size = atoi(dados);
+	    //printf("dadossize: %d\n", dados_size);
         len = len -  header_size;
-	//printf("len: %d\n", len); 
+	    //printf("len: %d\n", len);
         if ( len >= dados_size){
-	    evbuffer_drain(input, header_size);
+    	    evbuffer_drain(input, header_size);
             evbuffer_remove(input, &v, dados_size);
-	    v[dados_size] = '\0';
+    	    v[dados_size] = '\0';
             len = len - dados_size;
             client_submit_value(c, v, dados_size);
-//	    printf("Received message %s \n", v);
+            //printf("Received message %s \n", v);
+            fprintf(f, "Recebi: %s\n", v);
         }
     }
 
+    fclose(f);
 }
 
 static void
@@ -387,3 +395,4 @@ main(int argc, char const *argv[])
 
 	return 0;
 }
+

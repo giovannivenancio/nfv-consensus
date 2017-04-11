@@ -66,7 +66,10 @@ class Manager():
         """
 
         with open('/projects/nfv-consensus/src/paxos/vnf-paxos/paxos.conf', 'r') as f:
-            acceptors = f.readlines()[:-4:-1]
+            conf = f.readlines()[:-5:-1]
+            proposer = conf[-1].split(' ')[1]
+            acceptors = conf[:-1]
+
             for acceptor in acceptors:
                 acceptor_ip, acceptor_id = acceptor.split(' ')[1:3]
 
@@ -74,10 +77,11 @@ class Manager():
                     acceptor_id = str(acceptor_id)
                     break
 
+        if self.ip == proposer:
+            self.run([self.paxos_path + 'proposer', '0', self.paxos_conf])
+
         if 'ACCEPTOR' in roles:
             self.run([self.paxos_path + 'acceptor', acceptor_id, self.paxos_conf])
-        if 'PROPOSER' in roles:
-            self.run([self.paxos_path + 'proposer', '0', self.paxos_conf])
         if 'LEARNER' in roles:
             self.run([self.paxos_path + 'learner-paxos-vnf', self.paxos_conf])
 
@@ -87,8 +91,8 @@ class Manager():
         this VNF should manage. This is represented
         by a range of consecutive numbers (controllers id).
         Example:
-            domain = [2, 5] =>
-            domain = [172.17.0.2, 172.17.0.3, 172.17.0.4, 172.17.0.5]
+            domain = [172.17.0.2, 172.17.0.3, 172.17.0.4, 172.17.0.5] =>
+            domain = [2, 5]
         """
 
         vnf_domain = []

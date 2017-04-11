@@ -93,6 +93,9 @@ class ConsensusSwitch(app_manager.RyuApp):
             message += ' # ' + self.ip
             size = str(len(message))
 
+            with open('/log', 'a') as f:
+                f.write(message + "\n")
+
             # Send request for consensus
             self.conn.send(size)
             self.conn.send(message)

@@ -127,7 +127,7 @@ class Network():
                     '-v', '/home/gvsouza/projects:/projects',
                     '-it', 'gvsouza/nfv-consenso',
                     '/bin/bash', '-c',
-                    '/projects/nfv-consensus/src/vnf-manager/vnf-manager-proposer.sh'
+                    '/projects/nfv-consensus/src/vnf-manager/vnf-manager.sh'
                 ]
             else:
                 cmd = ['docker', 'run',
