@@ -165,8 +165,8 @@ on_connect(struct bufferevent* bev, short events, void* arg)
 	struct client* c = arg;
 	if (events & BEV_EVENT_CONNECTED) {
 		printf("Connected to proposer\n");
-		//for (i = 0; i < c->outstanding; ++i)
-		//	client_submit_internal_value(c);
+		for (i = 0; i < c->outstanding; ++i)
+			client_submit_internal_value(c);
 	} else {
 		printf("%s\n", evutil_socket_error_to_string(EVUTIL_SOCKET_ERROR()));
 	}
@@ -367,8 +367,8 @@ main(int argc, char const *argv[])
 {
 	int i = 1;
 	int proposer_id = 0;
-	int outstanding = 1;
-	int value_size = 32;
+	int outstanding = 10;
+	int value_size = 192;
 	const char* config = "../paxos.conf";
 
 	if (argc > 1 && argv[1][0] != '-') {

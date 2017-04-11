@@ -67,11 +67,11 @@ class Manager():
 
         with open('/projects/nfv-consensus/src/paxos/vnf-paxos/paxos.conf', 'r') as f:
             conf = f.readlines()[:-5:-1]
-            proposer = conf[-1].split(' ')[1]
+            proposer = conf[-1].split(' ')[2]
             acceptors = conf[:-1]
 
             for acceptor in acceptors:
-                acceptor_ip, acceptor_id = acceptor.split(' ')[1:3]
+                acceptor_id, acceptor_ip = acceptor.split(' ')[1:3]
 
                 if acceptor_ip == self.ip:
                     acceptor_id = str(acceptor_id)

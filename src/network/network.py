@@ -37,12 +37,11 @@ class Network():
 
         with open('../paxos/vnf-paxos/paxos.conf', 'w') as f:
             f.write(data)
-
-            f.write(' '.join(['proposer', self.vnfs[0], '0', '5550\n']))
+            f.write(' '.join(['proposer', '0', self.vnfs[0], '5550\n']))
 
             i = 0
             for vnf in self.vnfs:
-                f.write(' '.join(['acceptor', vnf, str(i), str(8800 + i) + '\n']))
+                f.write(' '.join(['acceptor', str(i), vnf, str(8800 + i) + '\n']))
                 i += 1
 
     def build_domain(self):
@@ -93,6 +92,8 @@ class Network():
                 '/bin/bash', '-c',
                 '/projects/nfv-consensus/src/controller/controller.sh'
             ]
+
+            print ' '.join(cmd)
 
             self.run(cmd)
             time.sleep(2)

@@ -13,7 +13,7 @@
 
 # Verbosity level: must be one of quiet, error, info, or debug.
 # Default is info.
- verbosity quiet
+ verbosity debug
 
 # Enable TCP_NODELAY?
 # Default is 'yes'.
