@@ -9,6 +9,7 @@ import time
 import yaml
 from subprocess import Popen
 from time import gmtime, strftime
+from perf import Performance
 
 class Manager():
 
@@ -142,17 +143,29 @@ class Manager():
             url = 'http://172.17.0.%s:8080/stats/flowentry/add' % str(host)
             requests.post(url, data=rule)
 
-        print rule
+        #print rule
 
     def mainloop(self):
         """
-        Keep waiting for consensus requests
+        Keep waiting for rules learned by libpaxos Learner.
         """
 
+        perf = Performance()
+
         connection, client_address = self.conn.accept()
+
+        perf.old_now = perf.get_time()
         while True:
             message = connection.recv(179)
             self.handle_request(message)
+
+            now = perf.get_time()
+            cons_time = now - perf.old_now
+            perf.old_now = now
+
+            perf.update_avg(cons_time)
+
+            print "time = %s s | avg = %s s" % (cons_time, perf.avg)
 
 if __name__ == '__main__':
 

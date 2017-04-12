@@ -151,10 +151,7 @@ class Network():
             cmd = ['cbench',
                 '-c', ctl,
                 '-p', '6653',
-                '-s', '1',
-                '-M', '1',
-                '-l', '15',
-                '-m', '2'
+                '-s', '1'
             ]
 
             self.run(cmd)
@@ -164,7 +161,7 @@ class Network():
 
     def stop_network(self, signal, frame):
         self.cleanup()
-        print "*** Done"
+        logging.info("\n*** Done")
         exit(0)
 
     def cleanup(self):
@@ -219,7 +216,7 @@ if __name__ == "__main__":
         time.sleep(1)
 
     logging.info("\n*** Starting [%d] cbench clients\n" % net.num_ctls)
-    #net.run_cbench()
+    net.run_cbench()
 
     logging.info("\n*** Network is Online")
     net.sleep()
