@@ -3,7 +3,6 @@
 import os
 import socket
 import time
-
 from time import strftime
 from subprocess import Popen
 from ryu.base import app_manager
@@ -22,12 +21,36 @@ class ConsensusSwitch(app_manager.RyuApp):
     def __init__(self, *args, **kwargs):
         super(ConsensusSwitch, self).__init__(*args, **kwargs)
         self.mac_to_port = {}
-        self.pkts = 0
 
         self.ip = self.get_my_ip()
         self.host = self.ip.split('.')[-1]
-
+        self.vnf = self.get_vnf()
         self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        server_address = (self.vnf, 8900)
+
+        # Keep trying to connect with libpaxos client
+        while True:
+            try:
+                self.conn.connect(server_address)
+                break
+            except:
+                time.sleep(1)
+
+    def get_my_ip(self):
+        """
+        Read controller IP.
+        """
+
+        f = os.popen('ifconfig eth0 | grep "inet\ addr" | cut -d: -f2 | cut -d" " -f1')
+        ip = f.read()
+        return ip[:-1]
+
+    def get_vnf(self):
+        """
+        Read domain file and sarch the correct VNF
+        to send the requests.
+        """
 
         with open("/projects/nfv-consensus/src/network/domain", 'r') as f:
             domain = f.readlines()
@@ -35,30 +58,16 @@ class ConsensusSwitch(app_manager.RyuApp):
                 vnf, controller = d[:-1].split(' ')
 
                 if controller == self.ip:
-                    self.vnf = vnf
                     break
 
-        server_address = (self.vnf, 8900)
-        while True:
-            try:
-                #print "Trying to connect with Paxos Client on %s:%d" % server_address
-                self.conn.connect(server_address)
-                with open('/log', 'a') as f:
-                    f.write("ok\n")
-                break
-            except:
-                with open('/log', 'a') as f:
-                    f.write("not ok\n" + str(server_address))
-                time.sleep(1)
-
-
-
-    def get_my_ip(self):
-        f = os.popen('ifconfig eth0 | grep "inet\ addr" | cut -d: -f2 | cut -d" " -f1')
-        ip = f.read()
-        return ip[:-1]
+        return vnf
 
     def build_rule(self, datapath, in_port, out_port, dst):
+        """
+        Build OpenFlow rule. This rule will be installed with
+        REST API on VNF-Manager.
+        """
+
         ofproto = datapath.ofproto
 
         rule = [
