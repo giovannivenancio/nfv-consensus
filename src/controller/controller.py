@@ -25,11 +25,20 @@ class ConsensusSwitch(app_manager.RyuApp):
         self.pkts = 0
 
         self.ip = self.get_my_ip()
+        self.host = self.ip.split('.')[-1]
 
-        time.sleep(1)
-        server_address = ('127.0.1.1', 8900)
         self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+        with open("/projects/nfv-consensus/src/network/domain", 'r') as f:
+            domain = f.readlines()
+            for d in domain:
+                vnf, controller = d[:-1].split(' ')
+
+                if controller == self.ip:
+                    self.vnf = vnf
+                    break
+
+        server_address = (self.vnf, 8900)
         while True:
             try:
                 #print "Trying to connect with Paxos Client on %s:%d" % server_address
@@ -41,6 +50,8 @@ class ConsensusSwitch(app_manager.RyuApp):
                 with open('/log', 'a') as f:
                     f.write("not ok\n" + str(server_address))
                 time.sleep(1)
+
+
 
     def get_my_ip(self):
         f = os.popen('ifconfig eth0 | grep "inet\ addr" | cut -d: -f2 | cut -d" " -f1')
@@ -90,18 +101,12 @@ class ConsensusSwitch(app_manager.RyuApp):
 
         if out_port != ofproto.OFPP_FLOOD:
             message = self.build_rule(datapath, msg.in_port, out_port, dst)
-            message += ' # ' + self.ip
+            message += '#' + self.host
             size = str(len(message))
-
-            with open('/log', 'a') as f:
-                f.write(message + "\n")
-
 
             # Send request for consensus
             self.conn.send(size)
             self.conn.send(message)
-
-            #time.sleep(1111111111111111111111111)
 
         data = None
         if msg.buffer_id == ofproto.OFP_NO_BUFFER:

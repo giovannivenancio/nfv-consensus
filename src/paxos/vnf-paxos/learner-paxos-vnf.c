@@ -60,11 +60,14 @@ handle_sigint(int sig, short ev, void* arg)
 static void
 submit_manager(struct client_value* v)
 {
+    //FILE *f = fopen("submit_manager.txt", "a");
     //size_t size = strlen(v->value);
-    int size = 192;
     //printf("size = %d\n", size);
-
+    /*fprintf(f, "size = %d\n", size);
+    fprintf(f, "submeti = %s\n", v->value);
+    fclose(f);*/
     //bufferevent_write(bev_manager, &size, sizeof(size_t));
+    int size = 179;
     bufferevent_write(bev_manager, &v->value, size);
 }
 

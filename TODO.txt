@@ -1,1 +1,1 @@
-- fazer learner enviar mensagens aprendidas para o manager
+https://docker-py.readthedocs.io/en/stable/containers.html

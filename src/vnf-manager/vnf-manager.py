@@ -2,6 +2,7 @@
 
 import datetime
 import os
+import requests
 import signal
 import socket
 import sys
@@ -84,6 +85,9 @@ class Manager():
             self.run([self.paxos_path + 'acceptor', acceptor_id, self.paxos_conf])
         if 'LEARNER' in roles:
             self.run([self.paxos_path + 'learner-paxos-vnf', self.paxos_conf])
+        time.sleep(1)
+        if 'LEARNER' in roles:
+            self.run([self.paxos_path + 'client-paxos-vnf', self.paxos_conf])
 
     def get_domain(self):
         """
@@ -127,13 +131,11 @@ class Manager():
         """
 
         rule, host = message.split('#')
-        print rule
-        print sender
 
-        if int(host) in self.domain:
-            print "instalo regra"
-            #request = "curl -X POST -d %s http://172.17.0.2:8080/stats/flowentry/add" % rule[:-1]
-            #os.system(request) # substituir por subprocess (popen)
+        host = int(host)
+        if host in self.domain:
+            url = 'http://172.17.0.%s:8080/stats/flowentry/add' % str(host)
+            requests.post(url, data=rule)
 
         print rule
 
@@ -144,9 +146,8 @@ class Manager():
 
         connection, client_address = self.conn.accept()
         while True:
-            message = connection.recv(192)
-            print 'received "%s"' % message
-            #self.handle_request(message)
+            message = connection.recv(179)
+            self.handle_request(message)
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:

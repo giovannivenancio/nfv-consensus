@@ -104,7 +104,7 @@ class Network():
         For debug purposes, each VNF is executing on a separate tmux pane.
         """
 
-        roles_list = ['ACCEPTOR', 'LEARNER', 'PROPOSER']
+        roles_list = ['ACCEPTOR', 'LEARNER', 'PROPOSER', 'CLIENT']
 
         self.run(['tmux', 'new-session', '-d', '-s', 'paxos'])
         self.run(['tmux', 'new-window', '-t', 'paxos'])
@@ -123,6 +123,7 @@ class Network():
         for vnf in self.vnfs:
             roles = ' '.join(roles_list)
 
+            # TODO: remove roles
             if 'PROPOSER' in roles:
                 cmd = ['docker', 'run',
                     '-v', '/home/gvsouza/projects:/projects',

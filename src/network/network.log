@@ -20,9 +20,9 @@ Running controller on 172.17.0.4
 
 *** Starting [3] VNF-Paxos
 
-Running VNF-Paxos on 172.17.0.5 with ACCEPTOR LEARNER PROPOSER
-Running VNF-Paxos on 172.17.0.6 with ACCEPTOR LEARNER
-Running VNF-Paxos on 172.17.0.7 with ACCEPTOR LEARNER
+Running VNF-Paxos on 172.17.0.5 with ACCEPTOR LEARNER PROPOSER CLIENT
+Running VNF-Paxos on 172.17.0.6 with ACCEPTOR LEARNER CLIENT
+Running VNF-Paxos on 172.17.0.7 with ACCEPTOR LEARNER CLIENT
 
 
 Loading... 10
