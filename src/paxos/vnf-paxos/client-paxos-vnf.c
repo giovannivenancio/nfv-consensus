@@ -78,7 +78,7 @@ handle_sigint(int sig, short ev, void* arg)
 	event_base_loopexit(base, NULL);
 }
 
-static void
+/*static void
 random_string(char *s, const int len)
 {
 	int i;
@@ -87,9 +87,9 @@ random_string(char *s, const int len)
 	for (i = 0; i < len-1; ++i)
 		s[i] = alphanum[rand() % (sizeof(alphanum) - 1)];
 	s[len-1] = 0;
-}
+}*/
 
-static void
+/*static void
 client_submit_internal_value(struct client* c)
 {
 	struct client_value v;
@@ -98,27 +98,17 @@ client_submit_internal_value(struct client* c)
 	random_string(v.value, v.size);
 	size_t size = sizeof(struct timeval) + sizeof(size_t) + v.size;
 	paxos_submit(c->bev, (char*)&v, size);
-}
+}*/
 
 static void
 client_submit_value(struct client* c, char *string, int len)
 {
     struct client_value v;
-    /*FILE *f = fopen("client_debug.txt", "a");
-    if (f == NULL)
-    {
-        printf("Error opening file!\n");
-        exit(1);
-    }*/
-
     gettimeofday(&v.t, NULL);
     strcpy(v.value, string);
     v.size = len;
-   size_t size = sizeof(struct timeval) + sizeof(size_t) + v.size;
-    /*fprintf(f, "%d\n", size);
-    fprintf(f, "%s\n", v.value);*/
+    size_t size = sizeof(struct timeval) + sizeof(size_t) + v.size;
     paxos_submit(c->bev, (char*)&v, size);
-    //fclose(f);
 }
 
 // Returns t2 - t1 in microseconds.
@@ -159,10 +149,10 @@ static void
 on_stats(evutil_socket_t fd, short event, void *arg)
 {
 	struct client* c = arg;
-	double mbps = (double)(c->stats.delivered*c->value_size*8) / (1024*1024);
-	printf("%d value/sec, %.2f Mbps, latency min %ld us max %ld us avg %ld us\n",
-		c->stats.delivered, mbps, c->stats.min_latency, c->stats.max_latency,
-		c->stats.avg_latency);
+	//double mbps = (double)(c->stats.delivered*c->value_size*8) / (1024*1024);
+	//printf("%d value/sec, %.2f Mbps, latency min %ld us max %ld us avg %ld us\n",
+	//	c->stats.delivered, mbps, c->stats.min_latency, c->stats.max_latency,
+	//	c->stats.avg_latency);
 	memset(&c->stats, 0, sizeof(struct stats));
 	event_add(c->stats_ev, &c->stats_interval);
 }
@@ -170,10 +160,10 @@ on_stats(evutil_socket_t fd, short event, void *arg)
 static void
 on_connect(struct bufferevent* bev, short events, void* arg)
 {
-	int i;
-	struct client* c = arg;
+	//int i;
+	//struct client* c = arg;
 	if (events & BEV_EVENT_CONNECTED) {
-		printf("Connected to proposer\n");
+		//printf("Connected to proposer\n");
 		//for (i = 0; i < c->outstanding; ++i)
 		//	client_submit_internal_value(c);
 	} else {
@@ -202,45 +192,35 @@ connect_to_proposer(struct client* c, const char* config, int proposer_id)
 
 static void
 extract_data(struct evbuffer *input, size_t len, struct client *c, struct bufferevent *bev){
-    FILE *f = fopen("client_debug.txt", "a");
     char v[MAX_VALUE_SIZE];
     char dados[3];
     int dados_size;
-    // size_t header_size = sizeof(size_t);
     size_t header_size = sizeof(char) * 3;
-    //printf("header size: %d\n", header_size);
+
     while (len >=  header_size){
         evbuffer_copyout(input,&dados, header_size);
 	    dados_size = atoi(dados);
 	    //printf("dadossize: %d\n", dados_size);
-        fprintf(f, "dadossize: %d\n", dados_size);
         len = len -  header_size;
-	    //printf("len: %d\n", len);
+
         if ( len >= dados_size){
     	    evbuffer_drain(input, header_size);
             evbuffer_remove(input, &v, dados_size);
-    	    //v[dados_size] = '\0';
             len = len - dados_size;
             client_submit_value(c, v, dados_size);
             //printf("Received message %s \n", v);
-            fprintf(f, "Received message %s \n", v);
         }
     }
-    fclose(f);
 }
 
 static void
 on_recv_value(struct bufferevent *bev, void *arg)
 {
-    //FILE *f = fopen("client_debug.txt", "a");
     struct client *c = arg;
     struct evbuffer *input = bufferevent_get_input(bev);
     size_t len = evbuffer_get_length(input);
     //printf("new data to read: %d\n", len);
-    //fprintf(f, "new data to read: %d\n", len);
-    //fclose(f);
     extract_data(input, len, c, bev);
-
 }
 
 static void

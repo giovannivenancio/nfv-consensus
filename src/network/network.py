@@ -27,9 +27,11 @@ class Network():
         self.create_paxos_conf()
         self.domain = self.build_domain()
 
+        self.cleanup()
+
     def create_paxos_conf(self):
         """
-        Write on paxos.conf the correct IP Address for proposers and acceptors
+        Write on paxos.conf correct IP Address for proposers and acceptors
         """
 
         with open('../paxos/vnf-paxos/paxos.conf.example', 'r') as f:
@@ -93,8 +95,6 @@ class Network():
                 '/projects/nfv-consensus/src/controller/controller.sh'
             ]
 
-            print ' '.join(cmd)
-
             self.run(cmd)
             time.sleep(2)
 
@@ -103,8 +103,6 @@ class Network():
         Create a docker container for each VNF-Paxos and execute them.
         For debug purposes, each VNF is executing on a separate tmux pane.
         """
-
-        roles_list = ['ACCEPTOR', 'LEARNER', 'PROPOSER', 'CLIENT']
 
         self.run(['tmux', 'new-session', '-d', '-s', 'paxos'])
         self.run(['tmux', 'new-window', '-t', 'paxos'])
@@ -121,25 +119,14 @@ class Network():
         i = 0
         tmux_active_sessions = 0
         for vnf in self.vnfs:
-            roles = ' '.join(roles_list)
+            cmd = ['docker', 'run',
+                '-v', '/home/gvsouza/projects:/projects',
+                '-it', 'gvsouza/nfv-consenso',
+                '/bin/bash', '-c',
+                '/projects/nfv-consensus/src/vnf-manager/vnf-manager.sh'
+            ]
 
-            # TODO: remove roles
-            if 'PROPOSER' in roles:
-                cmd = ['docker', 'run',
-                    '-v', '/home/gvsouza/projects:/projects',
-                    '-it', 'gvsouza/nfv-consenso',
-                    '/bin/bash', '-c',
-                    '/projects/nfv-consensus/src/vnf-manager/vnf-manager.sh'
-                ]
-            else:
-                cmd = ['docker', 'run',
-                    '-v', '/home/gvsouza/projects:/projects',
-                    '-it', 'gvsouza/nfv-consenso',
-                    '/bin/bash', '-c',
-                    '/projects/nfv-consensus/src/vnf-manager/vnf-manager.sh'
-                ]
-
-            logging.info("Running VNF-Paxos on %s with %s" % (vnf, roles))
+            logging.info("Running VNF-Paxos on %s" % vnf)
 
             if tmux_active_sessions < 3:
                 cmd = ' '.join(cmd)
@@ -149,7 +136,6 @@ class Network():
                 self.run(cmd)
 
             i += 1
-            roles_list = filter(lambda x: x != 'PROPOSER', roles_list)
 
         self.run(['tmux', 'selectp', '-t', '0'])
         self.run(['tmux', 'attach-session', '-t', 'paxos'])
@@ -204,7 +190,7 @@ class Network():
         Execute bash commands
         """
 
-        fh = open("NUL","w")
+        fh = open("/tmp/NUL", "w")
         Popen(cmd, stdin=None, stdout=fh, stderr=fh)
         fh.close()
 
@@ -213,8 +199,10 @@ if __name__ == "__main__":
         print "Usage: %s <num_controllers> <num_vnfs>" % sys.argv[0]
         exit(1)
 
-    net = Network(sys.argv[1], sys.argv[2])
-    net.cleanup()
+    num_controllers = sys.argv[1]
+    num_vnfs = sys.argv[2]
+
+    net = Network(num_controllers, num_vnfs)
 
     logging.info("\n*** Creating domain file\n")
     net.print_domain()

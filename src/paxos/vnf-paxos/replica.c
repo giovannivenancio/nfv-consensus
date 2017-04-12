@@ -52,9 +52,9 @@ handle_sigint(int sig, short ev, void* arg)
 static void
 deliver(unsigned iid, char* value, size_t size, void* arg)
 {
-	struct client_value* val = (struct client_value*)value;
+	/*struct client_value* val = (struct client_value*)value;
 	printf("%ld.%06d [%.191s] %ld bytes\n", val->t.tv_sec, val->t.tv_usec,
-		val->value, (long)val->size);
+		val->value, (long)val->size);*/
 }
 
 static void
@@ -67,15 +67,15 @@ start_replica(int id, const char* config)
 
 	if (verbose)
 		cb = deliver;
-	
+
 	base = event_base_new();
 	replica = evpaxos_replica_init(id, config, cb, NULL, base);
-	
+
 	if (replica == NULL) {
 		printf("Could not start the replica!\n");
 		exit(1);
 	}
-	
+
 	sig = evsignal_new(base, SIGINT, handle_sigint, base);
 	evsignal_add(sig, NULL);
 	event_base_dispatch(base);
@@ -121,6 +121,6 @@ main(int argc, char const *argv[])
 	}
 
 	start_replica(id, config);
-	
+
 	return 0;
 }

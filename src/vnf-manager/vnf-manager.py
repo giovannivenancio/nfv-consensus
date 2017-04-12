@@ -5,7 +5,6 @@ import os
 import requests
 import signal
 import socket
-import sys
 import time
 import yaml
 from subprocess import Popen
@@ -13,9 +12,10 @@ from time import gmtime, strftime
 
 class Manager():
 
-    def __init__(self, roles):
+    def __init__(self):
         signal.signal(signal.SIGINT, self.terminate)
 
+        self.roles = []
         self.ip = self.get_my_ip()
 
         with open("/projects/nfv-consensus/src/vnf-manager/config.yml", 'r') as ymlfile:
@@ -29,11 +29,11 @@ class Manager():
         self.conn = self.start_server()
 
         # Execute paxos roles
-        self.execute_roles(roles)
+        self.execute_roles()
 
     def start_server(self):
         """
-
+        Start TCP server to receive learned rules from libpaxos Learner.
         """
 
         server_address = ('127.0.1.1', 8901)
@@ -45,7 +45,7 @@ class Manager():
 
     def get_my_ip(self):
         """
-
+        Read VNF-Manager IP.
         """
 
         f = os.popen('ifconfig eth0 | grep "inet\ addr" | cut -d: -f2 | cut -d" " -f1')
@@ -57,11 +57,11 @@ class Manager():
         Execute bash commands
         """
 
-        fh = open("NUL","w")
+        fh = open("/tmp/NUL", "w")
         Popen(cmd, stdin=None, stdout=fh, stderr=fh)
         fh.close()
 
-    def execute_roles(self, roles):
+    def execute_roles(self):
         """
         Execute each Paxos role.
         """
@@ -79,15 +79,20 @@ class Manager():
                     break
 
         if self.ip == proposer:
+            self.roles.append('PROPOSER')
             self.run([self.paxos_path + 'proposer', '0', self.paxos_conf])
 
-        if 'ACCEPTOR' in roles:
-            self.run([self.paxos_path + 'acceptor', acceptor_id, self.paxos_conf])
-        if 'LEARNER' in roles:
-            self.run([self.paxos_path + 'learner-paxos-vnf', self.paxos_conf])
+        self.roles.append('ACCEPTOR')
+        self.run([self.paxos_path + 'acceptor', acceptor_id, self.paxos_conf])
+
+        self.roles.append('LEARNER')
+        self.run([self.paxos_path + 'learner-paxos-vnf', self.paxos_conf])
+
+        # Wait until proposer, acceptor and learner are stabilized
         time.sleep(1)
-        if 'LEARNER' in roles:
-            self.run([self.paxos_path + 'client-paxos-vnf', self.paxos_conf])
+
+        self.roles.append('CLIENT')
+        self.run([self.paxos_path + 'client-paxos-vnf', self.paxos_conf])
 
     def get_domain(self):
         """
@@ -126,7 +131,7 @@ class Manager():
 
     def handle_request(self, message):
         """
-        If sender is on domain's range, install rule.
+        If sender is on domains range, the rule should be installed.
         Otherwise, just store the rule.
         """
 
@@ -150,20 +155,12 @@ class Manager():
             self.handle_request(message)
 
 if __name__ == '__main__':
-    if len(sys.argv) < 3:
-        print 'usage: %s [LEARNER] [ACCEPTOR] [PROPOSER]' % sys.argv[0]
-        exit(1)
 
-    os.system('pkill -f proposer')
-    os.system('pkill -f acceptor')
-    os.system('pkill -f client-paxos-vnf')
-    os.system('pkill -f learner-paxos-vnf')
-
-    manager = Manager(sys.argv[1:])
+    manager = Manager()
 
     print "\n*** Paxos is running"
     print "- IP: %s"  % manager.ip
     print "- Domain: %s" % manager.domain
-    print "- Roles: %s\n" % ' '.join(sys.argv[1:])
+    print "- Roles: %s\n" % ' '.join(manager.roles)
 
     manager.mainloop()

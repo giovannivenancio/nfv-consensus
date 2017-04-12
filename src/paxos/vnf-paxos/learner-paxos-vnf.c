@@ -48,7 +48,6 @@ struct client_value
 
 struct bufferevent* bev_manager;
 
-
 static void
 handle_sigint(int sig, short ev, void* arg)
 {
@@ -60,12 +59,8 @@ handle_sigint(int sig, short ev, void* arg)
 static void
 submit_manager(struct client_value* v)
 {
-    //FILE *f = fopen("submit_manager.txt", "a");
     //size_t size = strlen(v->value);
     //printf("size = %d\n", size);
-    /*fprintf(f, "size = %d\n", size);
-    fprintf(f, "submeti = %s\n", v->value);
-    fclose(f);*/
     //bufferevent_write(bev_manager, &size, sizeof(size_t));
     int size = 179;
     bufferevent_write(bev_manager, &v->value, size);
@@ -75,12 +70,9 @@ submit_manager(struct client_value* v)
 static void
 deliver(unsigned iid, char* value, size_t size, void* arg)
 {
-	FILE *f = fopen("learner_debug.txt", "a");
 	struct client_value* v = (struct client_value*)value;
-	printf("Delivered value: %s\n", v->value);
+	//printf("Delivered value: %s\n", v->value);
 	submit_manager(v);
-	fprintf(f, "Recebi: %s\n", v->value);
-	fclose(f);
 }
 
 static void
