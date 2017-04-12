@@ -68,9 +68,15 @@ class Manager():
         """
 
         with open('/projects/nfv-consensus/src/paxos/vnf-paxos/paxos.conf', 'r') as f:
-            conf = f.readlines()[:-5:-1]
-            proposer = conf[-1].split(' ')[2]
-            acceptors = conf[:-1]
+            lines = f.readlines()
+
+            conf = []
+            for line in lines:
+                if '172.17.0' in line:
+                    conf.append(line[:-1])
+
+            proposer = conf[0].split(' ')[2]
+            acceptors = conf[1:]
 
             for acceptor in acceptors:
                 acceptor_id, acceptor_ip = acceptor.split(' ')[1:3]
@@ -142,8 +148,6 @@ class Manager():
         if host in self.domain:
             url = 'http://172.17.0.%s:8080/stats/flowentry/add' % str(host)
             requests.post(url, data=rule)
-
-        #print rule
 
     def mainloop(self):
         """
