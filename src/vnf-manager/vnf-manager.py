@@ -154,7 +154,7 @@ class Manager():
         Keep waiting for rules learned by libpaxos Learner.
         """
 
-        perf = Performance()
+        perf = Performance(self.ip)
 
         connection, client_address = self.conn.accept()
 
@@ -167,9 +167,11 @@ class Manager():
             cons_time = now - perf.old_now
             perf.old_now = now
 
+            perf.update_stats()
             perf.update_avg(cons_time)
 
             print "time = %s s | avg = %s s" % (cons_time, perf.avg)
+
 
 if __name__ == '__main__':
 
