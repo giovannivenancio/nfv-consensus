@@ -70,8 +70,13 @@ class ConsensusSwitch(app_manager.RyuApp):
 
         ofproto = datapath.ofproto
 
+        if len(str(datapath.id)) == 2:
+            dpid = 1
+        else:
+            dpid = datapath.id
+
         rule = [
-            '\'{"dpid": %d,' % datapath.id,
+            '\'{"dpid": %d,' % dpid,
             '"cookie": 1,',
             '"idle_timeout": 0,',
             '"hard_timeout": 0,',

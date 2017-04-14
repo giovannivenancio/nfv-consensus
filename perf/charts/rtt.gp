@@ -18,15 +18,15 @@ set boxwidth 1
 
 set format xy "%g"
 
-set ylabel 'Tempo de Resposta (s)'
-set yrange [0:500]
-set ytics 100
+set ylabel 'Flows/s per switch'
+set yrange [0:2000]
+set ytics 200
 
-set xlabel "Número de Requisições"
-set xrange [128:4096]
-set xtics (128, 256, 512, 1024, 2046, 4096)
+set xlabel "Number of switches"
+set xrange [1:32]
+set xtics (1, 2, 4, 8, 16, 32)
 set logscale x
 
 plot "/home/gvsouza/projects/nfv-consensus/perf/data/rtt/vnf.dat" using 1:2 title 'VNF-Consensus' with linespoints ls 3, \
-     "/home/gvsouza/projects/nfv-consensus/perf/data/rtt/paxos.dat" using 1:2 title 'Paxos no controlador' with linespoints ls 2
+     "/home/gvsouza/projects/nfv-consensus/perf/data/rtt/controller.dat" using 1:2 title 'Consensus on controller' with linespoints ls 2
 
