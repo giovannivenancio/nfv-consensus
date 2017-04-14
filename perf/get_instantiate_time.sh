@@ -2,12 +2,12 @@
 
 for i in {1..10}
 do
-   time docker run -v ~/projects:/projects -it gvsouza/nfv-consenso /bin/bash -c "cd /projects/nfv-consensus-controller/src/controller; ryu-manager controller.py cbench.py ofctl_rest.py"
+   time docker run -v ~/projects:/projects -it gvsouza/nfv-consenso /bin/bash -c "/projects/nfv-consensus/src/controller/controller.sh"
 done
 
 echo "--------------------------------------"
 
 for i in {1..10}
 do
-   time docker run -v ~/projects:/projects -it gvsouza/nfv-consenso /bin/bash -c "cd /projects/nfv-consensus/src/filter; pkill -f java; ./filter.py 1 5000 1 CLIENT LEARNER"
+   time docker run -v ~/projects:/projects -it gvsouza/nfv-consenso /bin/bash -c "/projects/nfv-consensus/src/vnf-manager/vnf-manager.sh"
 done

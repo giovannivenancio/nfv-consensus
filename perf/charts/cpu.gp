@@ -18,15 +18,15 @@ set boxwidth 1
 
 set format xy "%g"
 
-set ylabel 'CPU (%)'
+set ylabel 'CPU Usage(%)'
 set yrange [0:100]
 set ytics 10
 
-set xlabel "Tempo (s)"
+set xlabel "Time (s)"
 set xrange [0:60]
 set xtics 10
 
-plot "/home/gvsouza/projects/nfv-consensus/perf/data/cpu/vnf.dat" using 1:2 title 'VNF-Consensus' with linespoints ls 3, \
-     "/home/gvsouza/projects/nfv-consensus/perf/data/cpu/paxos.dat" using 1:2 title 'Paxos no controlador' with linespoints ls 2, \
-     "/home/gvsouza/projects/nfv-consensus/perf/data/cpu/controller.dat" using 1:2 title 'Controlador' with linespoints ls 5
+plot "/home/gvsouza/projects/nfv-consensus/perf/data/cpu/cpu_vnf/vnfs/vnf.dat" using 1:2 title 'VNF-Consensus' with linespoints ls 3, \
+     "/home/gvsouza/projects/nfv-consensus/perf/data/cpu/cpu_controller/controller.dat" using 1:2 title 'Consensus on controller' with linespoints ls 2, \
+     "/home/gvsouza/projects/nfv-consensus/perf/data/cpu/cpu_vnf/controllers/controller.dat" using 1:2 title 'Controller' with linespoints ls 5
 

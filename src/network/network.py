@@ -151,7 +151,9 @@ class Network():
             cmd = ['cbench',
                 '-c', ctl,
                 '-p', '6653',
-                '-s', '1'
+                '-s', '1',
+                '-l', '60',
+                '-t'
             ]
 
             self.run(cmd)

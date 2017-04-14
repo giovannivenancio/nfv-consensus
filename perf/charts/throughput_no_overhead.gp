@@ -18,14 +18,14 @@ set boxwidth 1
 
 set format xy "%g"
 
-set ylabel 'Consensos por segundo'
-set yrange [0:100]
-set ytics 10
+set ylabel 'Consensus per second'
+set yrange [0:1000]
+set ytics 100
 
-set xlabel "Tempo (s)"
-set xrange [0:60]
-set xtics 10
+set xlabel "Time (s)"
+set xrange [0:180]
+set xtics 20
 
 plot "/home/gvsouza/projects/nfv-consensus/perf/data/throughput/vnf_no_overhead.dat" using 1:2 title 'VNF-Consensus' with linespoints ls 3, \
-     "/home/gvsouza/projects/nfv-consensus/perf/data/throughput/paxos_no_overhead.dat" using 1:2 title 'Paxos no controlador' with linespoints ls 2
+     "/home/gvsouza/projects/nfv-consensus/perf/data/throughput/controller_no_overhead.dat" using 1:2 title 'Paxos on Controller' with linespoints ls 2
 

@@ -43,7 +43,7 @@ for r in sorted(result.keys()):
     f.write(str(i) + ' ' + str(diff) + '\n')
     i += 1
 
-    if i > 120:
-        break
+    # if i > 120:
+    #     break
 
 f.close()
