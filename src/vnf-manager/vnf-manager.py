@@ -170,7 +170,7 @@ class Manager():
             perf.update_stats()
             perf.update_avg(cons_time)
 
-            print "time = %s s | avg = %s s" % (cons_time, perf.avg)
+            print "time = %s s | avg = %s s | n = %s" % (cons_time, perf.avg, perf.num_cons)
 
 
 if __name__ == '__main__':
