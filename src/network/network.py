@@ -151,10 +151,9 @@ class Network():
             cmd = ['cbench',
                 '-c', ctl,
                 '-p', '6653',
-                '-s', '1',
+                '-s', '32',
                 '-l', '600',
-                '-M', '2'
-                #'-t'
+                '-t'
             ]
 
             self.run(cmd)
@@ -219,7 +218,7 @@ if __name__ == "__main__":
         time.sleep(1)
 
     logging.info("\n*** Starting [%d] cbench clients\n" % net.num_ctls)
-    #net.run_cbench()
+    net.run_cbench()
 
     logging.info("\n*** Network is Online")
     net.sleep()

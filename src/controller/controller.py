@@ -70,7 +70,7 @@ class ConsensusSwitch(app_manager.RyuApp):
 
         ofproto = datapath.ofproto
 
-        if len(str(datapath.id)) == 2:
+        if len(str(datapath.id)) >= 2:
             dpid = 1
         else:
             dpid = datapath.id
