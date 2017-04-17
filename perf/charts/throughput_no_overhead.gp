@@ -19,7 +19,7 @@ set boxwidth 1
 set format xy "%g"
 
 set ylabel 'Consensus per second'
-set yrange [0:1000]
+set yrange [0:1100]
 set ytics 100
 
 set xlabel "Time (s)"

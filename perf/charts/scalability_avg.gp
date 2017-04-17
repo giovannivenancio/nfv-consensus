@@ -19,7 +19,7 @@ set boxwidth 1
 set format xy "%g"
 
 set ylabel 'Average time of consensus (ms)'
-set yrange [0:0.012]
+set yrange [0:0.016]
 #set logscale y
 set ytics 0.001
 
