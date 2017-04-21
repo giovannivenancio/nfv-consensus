@@ -18,7 +18,7 @@ set boxwidth 1
 
 set format xy "%g"
 
-set ylabel 'Average time of consensus (ms)'
+set ylabel 'Average Paxos runtime (ms)'
 set yrange [0:0.032]
 #set logscale y
 set ytics 0.005
