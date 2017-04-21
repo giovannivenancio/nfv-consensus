@@ -18,7 +18,7 @@ set boxwidth 1
 
 set format xy "%g"
 
-set ylabel 'CPU Usage(%)'
+set ylabel 'CPU Usage (%)'
 set yrange [0:100]
 set ytics 10
 
