@@ -27,5 +27,5 @@ set xrange [0:180]
 set xtics 30
 
 plot "/home/gvsouza/projects/nfv-consensus/perf/data/throughput/vnf_no_overhead.dat" using 1:2 title 'VNF-Consensus' with linespoints ls 3, \
-     "/home/gvsouza/projects/nfv-consensus/perf/data/throughput/controller_no_overhead.dat" using 1:2 title 'Consensus on controller' with linespoints ls 2
+     "/home/gvsouza/projects/nfv-consensus/perf/data/throughput/controller_no_overhead.dat" using 1:2 title 'Paxos on controller' with linespoints ls 2
 

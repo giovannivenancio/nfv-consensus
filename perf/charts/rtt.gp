@@ -18,9 +18,9 @@ set boxwidth 1
 
 set format xy "%g"
 
-set ylabel 'Flows/s'
-set yrange [0:300000]
-set ytics 50000
+set ylabel 'Flows/s per switch'
+set yrange [0:2600]
+set ytics 200
 
 set xlabel "Number of switches"
 set xrange [1:128]
@@ -28,5 +28,5 @@ set xtics (1, 2, 4, 8, 16, 32, 64, 128)
 set logscale x
 
 plot "/home/gvsouza/projects/nfv-consensus/perf/data/rtt/vnf.dat" using 1:2 title 'VNF-Consensus' with linespoints ls 3, \
-     "/home/gvsouza/projects/nfv-consensus/perf/data/rtt/controller.dat" using 1:2 title 'Consensus on controller' with linespoints ls 2
+     "/home/gvsouza/projects/nfv-consensus/perf/data/rtt/controller.dat" using 1:2 title 'Paxos on controller' with linespoints ls 2
 

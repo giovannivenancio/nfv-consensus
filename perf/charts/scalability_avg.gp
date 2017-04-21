@@ -19,9 +19,9 @@ set boxwidth 1
 set format xy "%g"
 
 set ylabel 'Average time of consensus (ms)'
-set yrange [0:0.016]
+set yrange [0:0.032]
 #set logscale y
-set ytics 0.001
+set ytics 0.005
 
 set xlabel "Number of controllers"
 set xrange [2:10]
