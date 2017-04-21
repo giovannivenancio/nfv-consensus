@@ -4,9 +4,9 @@ set output "/home/gvsouza/projects/nfv-consensus/perf/images/cpu.eps"
 
 set style line 1 lt -1 lw 3 linecolor rgb "#6495ED" pi -1
 set style line 4 lt -1 lw 3 linecolor rgb "#006400" pi -1
-set style line 2 lt -1 pt 7 lw 1 linecolor rgb "#696969" pi -5
-set style line 3 lt -1 pt 5 lw 1 linecolor rgb "#CD5C5C" pi -5
-set style line 5 lt -1 pt 13 lw 1 linecolor rgb "#000080" pi -5
+set style line 2 lt -1 pt 7 lw 1 linecolor rgb "#696969" pi -10
+set style line 3 lt -1 pt 5 lw 1 linecolor rgb "#CD5C5C" pi -10
+set style line 5 lt -1 pt 13 lw 1 linecolor rgb "#000080" pi -10
 
 set zeroaxis;
 set grid ytics

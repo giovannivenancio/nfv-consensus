@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for i in {1..64}
+for i in {1..128}
 do
    python busy.py &
 done

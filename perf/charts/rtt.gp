@@ -18,9 +18,9 @@ set boxwidth 1
 
 set format xy "%g"
 
-set ylabel 'Flows/s per switch'
-set yrange [0:2600]
-set ytics 200
+set ylabel 'Flows/s'
+set yrange [0:300000]
+set ytics 50000
 
 set xlabel "Number of switches"
 set xrange [1:128]
