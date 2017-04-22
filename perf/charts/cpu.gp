@@ -27,6 +27,6 @@ set xrange [0:60]
 set xtics 10
 
 plot "/home/gvsouza/projects/nfv-consensus/perf/data/cpu/cpu_vnf/vnfs/vnf.dat" using 1:2 title 'VNF-Consensus' with linespoints ls 3, \
-     "/home/gvsouza/projects/nfv-consensus/perf/data/cpu/cpu_controller/controller.dat" using 1:2 title 'Paxos on controller' with linespoints ls 2, \
+     "/home/gvsouza/projects/nfv-consensus/perf/data/cpu/cpu_controller/controller.dat" using 1:2 title 'Consensus on controller' with linespoints ls 2, \
      "/home/gvsouza/projects/nfv-consensus/perf/data/cpu/cpu_vnf/controllers/controller.dat" using 1:2 title 'Controller' with linespoints ls 5
 

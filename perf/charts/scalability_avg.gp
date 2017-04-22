@@ -18,7 +18,7 @@ set boxwidth 1
 
 set format xy "%g"
 
-set ylabel 'Average Paxos runtime (ms)'
+set ylabel 'Average latency (ms)'
 set yrange [0:0.032]
 #set logscale y
 set ytics 0.005
@@ -28,5 +28,5 @@ set xrange [2:10]
 set xtics (2, 3, 4, 5, 6, 7, 8, 9, 10)
 
 plot "/home/gvsouza/projects/nfv-consensus/perf/data/scalability/vnf_avg.dat" using 1:2 title 'VNF-Consensus' with linespoints ls 3, \
-     "/home/gvsouza/projects/nfv-consensus/perf/data/scalability/controller_avg.dat" using 1:2 title 'Paxos on controller' with linespoints ls 2
+     "/home/gvsouza/projects/nfv-consensus/perf/data/scalability/controller_avg.dat" using 1:2 title 'Consensus on controller' with linespoints ls 2
 
