@@ -18,13 +18,13 @@ set boxwidth 1
 
 set format xy "%g"
 
-set ylabel 'Average throughput (s)'
+set ylabel 'Vazão média (s)'
 set yrange [0:600]
 set ytics 50
 
-set xlabel "Number of controllers"
+set xlabel "Número de controladores"
 set xrange [2:10]
 set xtics (2, 3, 4, 5, 6, 7, 8, 9, 10)
 
 plot "/home/gvsouza/projects/nfv-consensus/perf/data/scalability/vnf_number.dat" using 1:2 title 'VNF-Consensus' with linespoints ls 3, \
-     "/home/gvsouza/projects/nfv-consensus/perf/data/scalability/controller_number.dat" using 1:2 title 'Consensus on controller' with linespoints ls 2
+     "/home/gvsouza/projects/nfv-consensus/perf/data/scalability/controller_number.dat" using 1:2 title 'Consenso no controlador' with linespoints ls 2
