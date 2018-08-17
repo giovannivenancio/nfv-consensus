@@ -9,6 +9,8 @@ import time
 from subprocess import Popen
 from prettytable import PrettyTable
 
+HOME_DIR = '/home/gvsouza/projects'
+
 class Network():
 
     def __init__(self, num_controllers, num_vnfs):
@@ -89,7 +91,7 @@ class Network():
             logging.info("Running controller on %s" % ctl)
 
             cmd = ['docker', 'run',
-                '-v', '/home/gvsouza/projects:/projects',
+                '-v', HOME_DIR + ':/projects',
                 '-it', 'gvsouza/nfv-consenso',
                 '/bin/bash', '-c',
                 '/projects/nfv-consensus/src/controller/controller.sh'
@@ -120,7 +122,7 @@ class Network():
         tmux_active_sessions = 0
         for vnf in self.vnfs:
             cmd = ['docker', 'run',
-                '-v', '/home/gvsouza/projects:/projects',
+                '-v', HOME_DIR + ':/projects',
                 '-it', 'gvsouza/nfv-consenso',
                 '/bin/bash', '-c',
                 '/projects/nfv-consensus/src/vnf-manager/vnf-manager.sh'
