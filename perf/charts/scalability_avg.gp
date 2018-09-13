@@ -1,6 +1,6 @@
 set encoding "utf8"
-set terminal postscript eps enhanced color font 'Helvetica,20';
-set output "/home/gvsouza/projects/nfv-consensus/perf/images/scalability_avg.eps"
+set terminal postscript eps enhanced color font 'Helvetica,24';
+set output "/home/gvsouza/projects/nfv-consensus/perf/images/scalability_latency.eps"
 
 set style line 1 lt -1 lw 3 linecolor rgb "#CD5C5C" pi -1
 set style line 2 lt -1 pt 7 lw 2 linecolor rgb "#696969" pi -1
@@ -12,21 +12,21 @@ set zeroaxis;
 set grid ytics
 
 set key right top
-set key font "0.5"
+set key font "1"
 set key spacing 1
 set boxwidth 1
 
 set format xy "%g"
 
-set ylabel 'Latência média (ms)'
-set yrange [0:0.032]
+set ylabel 'Average Latency (ms)'
+set yrange [0:0.015]
 #set logscale y
-set ytics 0.005
+set ytics 0.002
 
-set xlabel "Número de controladores"
-set xrange [2:10]
-set xtics (2, 3, 4, 5, 6, 7, 8, 9, 10)
+set xlabel "Number of Controllers"
+set xrange [2:22]
+set xtics (2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22)
 
 plot "/home/gvsouza/projects/nfv-consensus/perf/data/scalability/vnf_avg.dat" using 1:2 title 'VNF-Consensus' with linespoints ls 3, \
-     "/home/gvsouza/projects/nfv-consensus/perf/data/scalability/controller_avg.dat" using 1:2 title 'Consenso no controlador' with linespoints ls 2
+     "/home/gvsouza/projects/nfv-consensus/perf/data/scalability/controller_avg.dat" using 1:2 title 'Consensus on controller' with linespoints ls 2
 

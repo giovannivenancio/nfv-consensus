@@ -9,7 +9,7 @@ import time
 from subprocess import Popen
 from prettytable import PrettyTable
 
-HOME_DIR = '/home/gvsouza/projects'
+HOME_DIR = '/home/vnfconsensus/projects'
 
 class Network():
 
@@ -39,14 +39,24 @@ class Network():
         with open('../paxos/vnf-paxos/paxos.conf.example', 'r') as f:
             data = f.read()
 
-        with open('../paxos/vnf-paxos/paxos.conf', 'w') as f:
-            f.write(data)
-            f.write(' '.join(['proposer', '0', self.vnfs[0], '5550\n']))
+        if self.num_vnfs == 0:
+            with open('../paxos/vnf-paxos/paxos.conf', 'w') as f:
+                f.write(data)
+                f.write(' '.join(['proposer', '0', self.controllers[0], '5550\n']))
 
-            i = 0
-            for vnf in self.vnfs:
-                f.write(' '.join(['acceptor', str(i), vnf, str(8800 + i) + '\n']))
-                i += 1
+                i = 0
+                for vnf in self.controllers:
+                    f.write(' '.join(['acceptor', str(i), vnf, str(8800 + i) + '\n']))
+                    i += 1
+        else:
+            with open('../paxos/vnf-paxos/paxos.conf', 'w') as f:
+                f.write(data)
+                f.write(' '.join(['proposer', '0', self.vnfs[0], '5550\n']))
+
+                i = 0
+                for vnf in self.vnfs:
+                    f.write(' '.join(['acceptor', str(i), vnf, str(8800 + i) + '\n']))
+                    i += 1
 
     def build_domain(self):
         """
@@ -54,19 +64,24 @@ class Network():
         """
 
         domain = {}
-        num_conn, remainder_conn = divmod(self.num_ctls, self.num_vnfs)
 
-        sub_domains = [
-            self.controllers[
-                i * num_conn + min(i, remainder_conn) :
-                (i + 1) * num_conn + min(i + 1, remainder_conn)
-            ] for i in xrange(self.num_vnfs)
-        ]
+        if self.num_vnfs == 0:
+            for ctl in self.controllers:
+                domain[ctl] = [ctl]
+        else:
+            num_conn, remainder_conn = divmod(self.num_ctls, self.num_vnfs)
 
-        i = 0
-        for s in sub_domains:
-            domain[self.vnfs[i]] = s
-            i += 1
+            sub_domains = [
+                self.controllers[
+                    i * num_conn + min(i, remainder_conn) :
+                    (i + 1) * num_conn + min(i + 1, remainder_conn)
+                ] for i in xrange(self.num_vnfs)
+            ]
+
+            i = 0
+            for s in sub_domains:
+                domain[self.vnfs[i]] = s
+                i += 1
 
         return domain
 
@@ -89,6 +104,7 @@ class Network():
 
         for ctl in self.controllers:
             logging.info("Running controller on %s" % ctl)
+            print "Running controller on %s" % ctl
 
             cmd = ['docker', 'run',
                 '-v', HOME_DIR + ':/projects',
@@ -105,6 +121,14 @@ class Network():
         Create a docker container for each VNF-Paxos and execute them.
         For debug purposes, each VNF is executing on a separate tmux pane.
         """
+
+        vnf_script = ''
+        if self.num_vnfs == 0:
+            self.num_vnfs = self.num_ctls
+            self.vnfs = self.controllers
+            vnf_script = 'controller-paxos.sh'
+        else:
+            vnf_script = 'vnf-manager.sh'
 
         self.run(['tmux', 'new-session', '-d', '-s', 'paxos'])
         self.run(['tmux', 'new-window', '-t', 'paxos'])
@@ -125,7 +149,7 @@ class Network():
                 '-v', HOME_DIR + ':/projects',
                 '-it', 'gvsouza/nfv-consenso',
                 '/bin/bash', '-c',
-                '/projects/nfv-consensus/src/vnf-manager/vnf-manager.sh'
+                '/projects/nfv-consensus/src/vnf-manager/' + vnf_script
             ]
 
             logging.info("Running VNF-Paxos on %s" % vnf)
@@ -208,10 +232,14 @@ if __name__ == "__main__":
     logging.info("\n*** Creating domain file\n")
     net.print_domain()
 
+    #exit(1)
+
     logging.info("\n*** Starting [%d] controllers\n" % net.num_ctls)
-    net.run_controllers()
+    print "\n*** Starting [%d] controllers\n" % net.num_ctls
+    #net.run_controllers()
 
     logging.info("\n*** Starting [%d] VNF-Paxos\n" % net.num_vnfs)
+    print "\n*** Starting [%d] VNF-Paxos\n" % net.num_vnfs
     net.run_paxos()
 
     logging.info("\n")
@@ -220,7 +248,9 @@ if __name__ == "__main__":
         time.sleep(1)
 
     logging.info("\n*** Starting [%d] cbench clients\n" % net.num_ctls)
+    print "\n*** Starting [%d] cbench clients\n" % net.num_ctls
     net.run_cbench()
 
     logging.info("\n*** Network is Online")
+    print "\n*** Network is Online"
     net.sleep()

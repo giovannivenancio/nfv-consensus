@@ -33,10 +33,12 @@ class ConsensusSwitch(app_manager.RyuApp):
         while True:
             try:
                 self.conn.connect(server_address)
-                print "connected"
+                with open('controlador_debug.log', 'a') as f:
+                    f.write('conectou\n')
                 break
             except:
-                print "can't connect..."
+                with open('controlador_debug.log', 'a') as f:
+                    f.write('nao conectou\n')
                 time.sleep(1)
 
     def get_my_ip(self):

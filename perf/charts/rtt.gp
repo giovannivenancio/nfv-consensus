@@ -1,5 +1,5 @@
 set encoding "utf8"
-set terminal postscript eps enhanced color font 'Helvetica,20';
+set terminal postscript eps enhanced color font 'Helvetica,24';
 set output "/home/gvsouza/projects/nfv-consensus/perf/images/rtt.eps"
 
 set style line 1 lt -1 lw 3 linecolor rgb "#CD5C5C" pi -1
@@ -12,7 +12,7 @@ set zeroaxis;
 set grid ytics
 
 set key right top
-set key font "0.5"
+set key font "1"
 set key spacing 1
 set boxwidth 1
 

@@ -1,5 +1,5 @@
 set encoding "utf8"
-set terminal postscript eps enhanced color font 'Helvetica,20';
+set terminal postscript eps enhanced color font 'Helvetica,24';
 set output "/home/gvsouza/projects/nfv-consensus/perf/images/cpu.eps"
 
 set style line 1 lt -1 lw 3 linecolor rgb "#6495ED" pi -1
@@ -12,7 +12,7 @@ set zeroaxis;
 set grid ytics
 
 set key right top
-set key font "0.5"
+set key font "1"
 set key spacing 1
 set boxwidth 1
 
@@ -28,5 +28,5 @@ set xtics 10
 
 plot "/home/gvsouza/projects/nfv-consensus/perf/data/cpu/cpu_vnf/vnfs/vnf.dat" using 1:2 title 'VNF-Consensus' with linespoints ls 3, \
      "/home/gvsouza/projects/nfv-consensus/perf/data/cpu/cpu_controller/controller.dat" using 1:2 title 'Consensus on controller' with linespoints ls 2, \
-     "/home/gvsouza/projects/nfv-consensus/perf/data/cpu/cpu_vnf/controllers/controller.dat" using 1:2 title 'Controller' with linespoints ls 5
+     "/home/gvsouza/projects/nfv-consensus/perf/data/cpu/cpu_vnf/controllers/controller.dat" using 1:2 title 'Controller baseline' with linespoints ls 5
 

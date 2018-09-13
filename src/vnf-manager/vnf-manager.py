@@ -124,6 +124,13 @@ class Manager():
 
         return range(min(vnf_domain), max(vnf_domain) + 1)
 
+    def _install_rule(self):
+        start_time = time.time()
+        while True:
+            elapsed_time = time.time() - start_time
+            if elapsed_time >= 0.05:
+                break
+
     def terminate(self, signal, frame):
         """
         On Keyboard Interrupt, kill remaining processes
@@ -135,6 +142,7 @@ class Manager():
         os.system('pkill -f client-paxos-vnf')
         os.system('pkill -f learner-paxos-vnf')
         exit(0)
+
 
     def handle_request(self, message):
         """
@@ -148,6 +156,7 @@ class Manager():
         if host in self.domain:
             url = 'http://172.17.0.%s:8080/stats/flowentry/add' % str(host)
             requests.post(url, data=rule)
+            self._install_rule()
 
     def mainloop(self):
         """
@@ -159,6 +168,7 @@ class Manager():
         connection, client_address = self.conn.accept()
 
         perf.old_now = perf.get_time()
+        start_time = time.time()
         while True:
             message = connection.recv(179)
             self.handle_request(message)
@@ -170,7 +180,12 @@ class Manager():
             perf.update_stats()
             perf.update_avg(cons_time)
 
-            print "time = %s s | avg = %s s | n = %s" % (cons_time, perf.avg, perf.num_cons)
+            elapsed_time = time.time() - start_time
+
+            if elapsed_time >= 10:
+                stats = "time = %s s | avg = %s s | n = %s" % (cons_time, perf.avg, perf.num_cons)
+                print stats
+                start_time = time.time()
 
 
 if __name__ == '__main__':
