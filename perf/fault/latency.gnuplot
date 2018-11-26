@@ -1,6 +1,6 @@
 set encoding "utf8"
 set terminal postscript eps enhanced color font 'Helvetica,24';
-set output "/home/gvsouza/Desktop/fault/latency.eps"
+set output "/home/gvsouza/projects/nfv-consensus/perf/fault/latency.eps"
 
 set zeroaxis;
 set grid ytics
@@ -20,6 +20,6 @@ set format xy "%g"
 
 set ylabel 'Latency (ms)'
 set xlabel "Number of VNF Faults"
-set yrange [0:0.0035]
+set yrange [0:0.005]
 
-plot "latency.dat" using 1:3:xtic(2) with boxes notitle ls 2
+plot "/home/gvsouza/projects/nfv-consensus/perf/fault/latency.dat" using 1:3:xtic(2) with boxes notitle ls 2
