@@ -2,7 +2,7 @@ set encoding "utf8"
 set terminal postscript eps enhanced color font 'Helvetica,24';
 set output "/home/gvsouza/projects/nfv-consensus/perf/fault/throughput.eps"
 
-set zeroaxis;
+#set zeroaxis;
 set grid ytics
 set ytics 50
 set grid
@@ -19,7 +19,7 @@ set boxwidth 0.5
 set format xy "%g"
 
 set ylabel 'Throughput (consensus/s)'
-set xlabel "Number of VNF Faults"
+set xlabel "Number of VNF Failures"
 set yrange [0:600]
 
 plot "/home/gvsouza/projects/nfv-consensus/perf/fault/throughput.dat" using 1:3:xtic(2) with boxes notitle ls 2
